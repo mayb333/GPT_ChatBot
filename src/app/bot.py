@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from loguru import logger
 from src.app.loader import bot, dp, db
 from src.handlers.start import process_start_command
-from src.handlers.admin import process_adding_admin, process_removing_admin
+from src.handlers.admin import process_adding_admin, process_removing_admin, process_adding_user, process_removing_user
 from src.handlers.dialog import process_asking_openai, process_ending_dialog
 
 

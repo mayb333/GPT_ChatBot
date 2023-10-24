@@ -1,4 +1,4 @@
-CREATE TABLE users
+CREATE TABLE registered_users
 (
 	user_id varchar(50),
 	username varchar(50),
@@ -12,3 +12,15 @@ CREATE TABLE messages
 	message varchar(1000),
 	timestamp varchar(50)
 );
+
+CREATE TABLE admins
+(
+	user_id varchar(50),
+	date_added varchar(50)
+)
+
+CREATE TABLE allowed_users
+(
+	user_id varchar(50),
+	date_added varchar(50)
+)

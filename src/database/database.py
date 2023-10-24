@@ -19,12 +19,12 @@ class DataBase:
 
         return connection 
     
-    def add_user(self, user_id, username, first_name, timestamp=datetime.now().strftime("%d/%m/%Y %H:%M:%S")):
+    def register_user(self, user_id, username, first_name, timestamp=datetime.now().strftime("%d/%m/%Y %H:%M:%S")):
         try:
             connection = self.connect_to_db()
 
             with connection.cursor() as cursor:
-                query = f"""INSERT INTO users (user_id, username, first_name, first_message) 
+                query = f"""INSERT INTO registered_users (user_id, username, first_name, first_message) 
                             VALUES('{user_id}', '{username}', '{first_name}', '{timestamp}')"""
 
                 cursor.execute(query)
@@ -34,16 +34,16 @@ class DataBase:
                 logger.info(f"User with id={user_id} has been added to users table")
                 logger.info("Closed connection to Database")
         except Exception as exp:
-            logger.info(f"Couldn't execute the function \"add_user\" \n {exp}")
+            logger.info(f"Couldn't execute the function \"register_user\" \n {exp}")
 
-    def user_not_in_users(self, user_id):
+    def user_not_in_registered_users(self, user_id):
         try:
             connection = self.connect_to_db()
             flag = False
 
             with connection.cursor() as cursor:
                 query = f"""SELECT user_id
-                            FROM users
+                            FROM registered_users
                             WHERE user_id = '{user_id}';"""
                 cursor.execute(query)
                 result = cursor.fetchone()
@@ -56,4 +56,4 @@ class DataBase:
                 return flag
 
         except Exception as exp:
-            logger.info(f"Couldn't execute the function \"user_not_in_users\" \n {exp}")
+            logger.info(f"Couldn't execute the function \"user_not_in_registered_users\" \n {exp}")

@@ -1,11 +1,12 @@
 from aiogram import types
 from loguru import logger
+from config import CONTACT_ACCOUNT
 from src.app.loader import dp, db
 
 
 @dp.message_handler(commands=['start'])
 async def process_start_command(message: types.Message):
-    await message.reply("Hello! Ask me something")
+    await message.reply(f"Hello! Contact {CONTACT_ACCOUNT} for access to the bot")
     
     logger.info(f"User with id={message.from_id} started the bot!")
 

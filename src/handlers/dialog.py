@@ -1,13 +1,11 @@
 from aiogram import types
 from loguru import logger
-from config import CONTACT_ACCOUNT
-from aiogram.dispatcher.filters import Text
+from config import CONTACT_ACCOUNT, ALLOWED_USERS
 from src.app.loader import dp, db
 from src.utils import ask_openai
 from src.utils.markups import end_dialog_markup, no_markup
 
 
-ALLOWED_USERS = [] #user_ids
 USERS_HISTORY = {}
 
 

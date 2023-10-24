@@ -1,4 +1,5 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, \
+                          KeyboardButton, ReplyKeyboardRemove
 
 
 end_dialog_markup = ReplyKeyboardMarkup(resize_keyboard=True)\

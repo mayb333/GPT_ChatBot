@@ -3,13 +3,7 @@ import psycopg2
 from datetime import datetime
 from loguru import logger
 from dotenv import load_dotenv
-
-
-# Load environment variables
-load_dotenv()
-
-
-DATABASE_URL = os.getenv("DATABASE_URL")
+from config import DATABASE_URL
 
 
 class DataBase:

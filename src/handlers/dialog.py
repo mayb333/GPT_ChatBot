@@ -1,6 +1,6 @@
 from aiogram import types
 from loguru import logger
-from config import CONTACT_ACCOUNT, ALLOWED_USERS
+from config import CONTACT_ACCOUNT, ALLOWED_USERS, ADMIN_IDS
 from src.app.loader import dp, db
 from src.utils import ask_openai
 from src.utils.markups import end_dialog_markup, no_markup
@@ -39,3 +39,9 @@ async def process_asking_openai(message: types.Message):
 async def process_ending_dialog(message: types.Message):
     await message.reply("The conversation is ended.\n"
                         "To start a new one, type your question.", reply_markup=no_markup)
+
+
+@dp.message_handler(lambda message: message.from_user.id not in ALLOWED_USERS)
+async def process_not_allowed_user(message: types.Message):
+    await message.answer(f"You don't have access to the Bot.\n\n"\
+                          "Contact {CONTACT_ACCOUNT} for getting access to the Bot.")

@@ -19,3 +19,4 @@ async def process_start_command(message: types.Message):
     # Add new user to users table
     if db.user_not_in_registered_users(user_id=user_id):
         db.register_user(user_id=user_id, username=username, first_name=first_name)
+    

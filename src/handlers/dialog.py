@@ -2,7 +2,8 @@ from aiogram import types
 from loguru import logger
 from config import CONTACT_ACCOUNT, ALLOWED_USERS, ADMIN_IDS
 from src.app.loader import dp, db, bot
-from src.utils import ask_openai, reduce_context_window
+from src.utils import ask_openai
+from src.utils.messages import reduce_context_window, send_in_parts
 from src.utils.markups import end_dialog_markup, no_markup
 
 
@@ -32,7 +33,9 @@ async def process_asking_openai(message: types.Message):
     # Add answer from the OpenAI to history for future tracking context of the dialog
     USERS_HISTORY[user_id].append({"role": "assistant", "content": model_answer})
 
-    await message.answer(model_answer, reply_markup=end_dialog_markup)
+    # Send model answer. If len(model_answer) > 4096, then model answer is sended in parts
+    await send_in_parts(message=model_answer, chat_id=message.chat.id, reply_markup=end_dialog_markup)
+    logger.info(f"Successfully sent answer from GPT to user id={user_id}")
 
     # Add message to database (messages table)
     db.add_data_to_messages_table(user_id=user_id, message=message.text, tokens=tokens)
@@ -49,6 +52,7 @@ async def process_ending_dialog(message: types.Message):
     else:
         await message.answer(f"There was no active conversation.\n\n"\
                               "Start a conversation by typing your question.\n\n", reply_markup=no_markup)
+
 
 @dp.message_handler(lambda message: message.from_user.id not in ALLOWED_USERS)
 async def process_not_allowed_user(message: types.Message):

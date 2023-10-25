@@ -24,14 +24,15 @@ async def process_asking_openai(message: types.Message):
     prompt = USERS_HISTORY[user_id]
 
     # Get openai answer
-    model_answer = await ask_openai(prompt)
+    model_answer, tokens = await ask_openai(prompt)
 
+    # Add answer from the OpenAI to history for tracking the context of the dialog
     USERS_HISTORY[user_id].append({"role": "assistant", "content": model_answer})
 
     await message.answer(model_answer, reply_markup=end_dialog_markup)
 
     # Add message to database (messages table)
-    db.add_data_to_messages_table(user_id=user_id, message=message.text)
+    db.add_data_to_messages_table(user_id=user_id, message=message.text, tokens=tokens)
 
 
 @dp.message_handler(lambda message: message.text == '❌ End Conversation' and message.from_user.id in ALLOWED_USERS)

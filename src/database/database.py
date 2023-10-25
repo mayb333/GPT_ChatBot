@@ -58,13 +58,13 @@ class DataBase:
         except Exception as exp:
             logger.info(f"Couldn't execute the function \"user_not_in_registered_users\" \n {exp}")
 
-    def add_data_to_messages_table(self, user_id, message, timestamp=datetime.now().strftime("%d/%m/%Y %H:%M:%S")):
+    def add_data_to_messages_table(self, user_id, message, tokens, timestamp=datetime.now().strftime("%d/%m/%Y %H:%M:%S")):
         try:
             connection = self.connect_to_db()
 
             with connection.cursor() as cursor:
-                query = f"""INSERT INTO messages (user_id, message, timestamp) 
-                            VALUES('{user_id}', '{message}', '{timestamp}')"""
+                query = f"""INSERT INTO messages (user_id, message, tokens, timestamp) 
+                            VALUES('{user_id}', '{message}', '{tokens}', '{timestamp}')"""
 
                 cursor.execute(query)
                 connection.commit()

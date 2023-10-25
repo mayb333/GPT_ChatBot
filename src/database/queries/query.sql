@@ -9,7 +9,8 @@ CREATE TABLE registered_users
 CREATE TABLE messages
 (
 	user_id varchar(50),
-	message varchar(1000),
+	message varchar(5000),
+	tokens varchar (20),
 	timestamp varchar(50)
 );
 

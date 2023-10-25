@@ -40,11 +40,17 @@ async def process_asking_openai(message: types.Message):
 
 @dp.message_handler(lambda message: message.text == '❌ End Conversation' and message.from_user.id in ALLOWED_USERS)
 async def process_ending_dialog(message: types.Message):
-    await message.reply("The conversation is ended.\n"
-                        "To start a new one, type your question.", reply_markup=no_markup)
-
+    user_id = message.from_user.id
+    if user_id in USERS_HISTORY.keys():
+        del USERS_HISTORY[user_id]
+    
+        await message.reply("The conversation is ended.\n"
+                            "To start a new one, type your question.", reply_markup=no_markup)
+    else:
+        await message.answer(f"There was no active conversation.\n\n"\
+                              "Start a conversation by typing your question.\n\n", reply_markup=no_markup)
 
 @dp.message_handler(lambda message: message.from_user.id not in ALLOWED_USERS)
 async def process_not_allowed_user(message: types.Message):
     await message.answer(f"You don't have access to the Bot.\n\n"\
-                          "Contact {CONTACT_ACCOUNT} for getting access to the Bot.")
+                          "Contact {CONTACT_ACCOUNT} for getting access to the Bot.", reply_markup=no_markup)

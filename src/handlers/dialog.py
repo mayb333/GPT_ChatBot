@@ -2,7 +2,7 @@ from aiogram import types
 from loguru import logger
 from config import CONTACT_ACCOUNT, ALLOWED_USERS, ADMIN_IDS
 from src.app.loader import dp, db, bot
-from src.utils import ask_openai
+from src.utils import ask_openai, reduce_context_window
 from src.utils.markups import end_dialog_markup, no_markup
 
 
@@ -19,17 +19,17 @@ async def process_asking_openai(message: types.Message):
     if not USERS_HISTORY.get(user_id):
         USERS_HISTORY[user_id] = []
 
-    # Build prompt
+    # Add new prompt to context window (history)
     USERS_HISTORY[user_id].append({"role": "user", "content": message.text})
 
-    # !!! Need to dicrease history if it takes too much tokens
-
-    prompt = USERS_HISTORY[user_id]
+    # Reduce context window if it's greater than 4,000 tokens
+    USERS_HISTORY[user_id] = reduce_context_window(USERS_HISTORY[user_id])
+    messages_for_model = USERS_HISTORY[user_id]
 
     # Get openai answer
-    model_answer, tokens = await ask_openai(prompt)
+    model_answer, tokens = await ask_openai(messages_for_model)
 
-    # Add answer from the OpenAI to history for tracking the context of the dialog
+    # Add answer from the OpenAI to history for future tracking context of the dialog
     USERS_HISTORY[user_id].append({"role": "assistant", "content": model_answer})
 
     await message.answer(model_answer, reply_markup=end_dialog_markup)

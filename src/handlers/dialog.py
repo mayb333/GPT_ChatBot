@@ -1,7 +1,7 @@
 from aiogram import types
 from loguru import logger
 from config import CONTACT_ACCOUNT, ALLOWED_USERS, ADMIN_IDS
-from src.app.loader import dp, db
+from src.app.loader import dp, db, bot
 from src.utils import ask_openai
 from src.utils.markups import end_dialog_markup, no_markup
 
@@ -11,6 +11,9 @@ USERS_HISTORY = {}
 
 @dp.message_handler(lambda message: message.text != '❌ End Conversation' and message.from_user.id in ALLOWED_USERS)
 async def process_asking_openai(message: types.Message):
+    # Add typing action in bot
+    await bot.send_chat_action(message.chat.id, types.ChatActions.TYPING)
+
     user_id = message.from_user.id
 
     if not USERS_HISTORY.get(user_id):

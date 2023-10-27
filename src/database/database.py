@@ -74,4 +74,72 @@ class DataBase:
                 logger.info("Closed connection to Database")
         except Exception as exp:
             logger.info(f"Couldn't execute the function \"add_data_to_messages_table\" \n {exp}")
+
+    def add_user_to_allowed_users_table(self, user_id, timestamp=datetime.now().strftime("%d/%m/%Y %H:%M:%S")):
+        try:
+            connection = self.connect_to_db()
+
+            with connection.cursor() as cursor:
+                query = f"""INSERT INTO allowed_users (user_id, date_added) 
+                            VALUES('{user_id}', '{timestamp}')"""
+
+                cursor.execute(query)
+                connection.commit()
+                connection.close()
+
+                logger.info(f"User with id={user_id} has been added to allowed_users table")
+                logger.info("Closed connection to Database")
+        except Exception as exp:
+            logger.info(f"Couldn't execute the function \"add_user_to_allowed_users_table\" \n {exp}")
+
+    def add_user_to_admins_table(self, user_id, timestamp=datetime.now().strftime("%d/%m/%Y %H:%M:%S")):
+        try:
+            connection = self.connect_to_db()
+
+            with connection.cursor() as cursor:
+                query = f"""INSERT INTO admins (user_id, date_added) 
+                            VALUES('{user_id}', '{timestamp}')"""
+
+                cursor.execute(query)
+                connection.commit()
+                connection.close()
+
+                logger.info(f"User with id={user_id} has been added to admins table")
+                logger.info("Closed connection to Database")
+        except Exception as exp:
+            logger.info(f"Couldn't execute the function \"add_user_to_admins_table\" \n {exp}")
+
+    def remove_user_from_allowed_users_table(self, user_id):
+        try:
+            connection = self.connect_to_db()
+
+            with connection.cursor() as cursor:
+                query = f"""DELETE FROM allowed_users 
+                            WHERE user_id = '{user_id}';"""
+
+                cursor.execute(query)
+                connection.commit()
+                connection.close()
+
+                logger.info(f"User with id={user_id} has been remove from allowed_users table")
+                logger.info("Closed connection to Database")
+        except Exception as exp:
+            logger.info(f"Couldn't execute the function \"remove_user_from_allowed_users_table\" \n {exp}")
+
+    def remove_user_from_admins_table(self, user_id):
+        try:
+            connection = self.connect_to_db()
+
+            with connection.cursor() as cursor:
+                query = f"""DELETE FROM admins 
+                            WHERE user_id = '{user_id}';"""
+
+                cursor.execute(query)
+                connection.commit()
+                connection.close()
+
+                logger.info(f"User with id={user_id} has been removed from admins table")
+                logger.info("Closed connection to Database")
+        except Exception as exp:
+            logger.info(f"Couldn't execute the function \"remove_user_from_admins_table\" \n {exp}")
         

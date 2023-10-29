@@ -1,11 +1,11 @@
 import os
+import src.handlers.start
+import src.handlers.admin
+import src.handlers.dialog
 from aiogram import Bot, Dispatcher, executor, types
-from dotenv import load_dotenv
+from config import OWNER_ID
 from loguru import logger
 from src.app.loader import bot, dp, db
-from src.handlers.start import process_start_command
-from src.handlers.admin import process_adding_admin, process_removing_admin, process_adding_user, process_removing_user
-from src.handlers.dialog import process_asking_openai, process_ending_dialog, process_not_allowed_user
 
 
 class GptBotLaunching:
@@ -17,6 +17,11 @@ class GptBotLaunching:
 
     async def _on_startup(self, dp):
         logger.info("Bot started.")
+
+        # Write to DB
+        db.add_user_to_admins_table(user_id=OWNER_ID)
+
+        logger.info("Initialized Main Admin")
 
     async def _on_shutdown(self, dp):
         logger.info("Bot stopped.")

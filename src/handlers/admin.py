@@ -30,15 +30,15 @@ async def process_removing_user(message: types.Message):
 
 
 @dp.message_handler(commands=["get_reg_users"])
-async def process_removing_user(message: types.Message):
+async def process_getting_registered_users(message: types.Message):
     await admin.get_registered_users(message=message)
 
 
 @dp.message_handler(commands=["get_allowed_users"])
-async def process_removing_user(message: types.Message):
+async def process_getting_allowed_users(message: types.Message):
     await admin.get_allowed_users(message=message)
 
 
 @dp.message_handler(commands=["get_admins"])
-async def process_removing_user(message: types.Message):
+async def process_getting_admins(message: types.Message):
     await admin.get_admins(message=message)

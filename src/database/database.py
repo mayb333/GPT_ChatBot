@@ -23,7 +23,7 @@ class DataBase:
             connection = self.connect_to_db()
 
             with connection.cursor() as cursor:
-                query = f"""INSERT INTO registered_users (user_id, username, first_name, first_message) 
+                query = f"""INSERT INTO registered_users (user_id, username, first_name, timestamp) 
                             VALUES('{user_id}', '{username}', '{first_name}', '{timestamp}')"""
 
                 cursor.execute(query)

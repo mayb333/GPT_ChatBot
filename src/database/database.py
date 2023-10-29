@@ -2,7 +2,6 @@ import os
 import psycopg2
 from datetime import datetime
 from loguru import logger
-from dotenv import load_dotenv
 from config import DATABASE_URL
 
 
@@ -200,16 +199,3 @@ class DataBase:
 
         except Exception as exp:
             logger.info(f"Couldn't execute the function \"import_admins\" \n {exp}")
-        
-
-if __name__ == '__main__':
-    import pandas as pd
-    from tabulate import tabulate
-    db = DataBase()
-    res = db.import_allowed_users()
-
-    print(res)
-
-    res_2 = db.import_admins()
-
-    print(res_2)

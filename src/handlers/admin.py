@@ -42,3 +42,8 @@ async def process_getting_allowed_users(message: types.Message):
 @dp.message_handler(commands=["get_admins"])
 async def process_getting_admins(message: types.Message):
     await admin.get_admins(message=message)
+
+
+@dp.message_handler(commands=["get_analytics"])
+async def process_getting_admins(message: types.Message):
+    await admin.get_analytics(message=message)

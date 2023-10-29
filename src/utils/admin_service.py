@@ -1,5 +1,6 @@
 import pandas as pd
 from aiogram import types
+from datetime import datetime, timedelta
 from loguru import logger
 from prettytable import PrettyTable
 from config import ADMIN_IDS, ALLOWED_USERS, OWNER_ID
@@ -104,18 +105,14 @@ class AdminService:
         
         result = db.import_registered_users()
         result = pd.DataFrame(result, columns=['user_id', 'username', 'first_name', 'date'])
+        result = result[['user_id', 'username', 'first_name']]
 
         if len(result) == 0:
             await message.answer("No data found for <u>Registered users</u>")
             return 
 
-        # Create PrettyTable class for pretty ouputs of the table in telegram
-        table = PrettyTable()
-        table.field_names = ['user_id', 'username', 'first_name']
-
-        for index, row in result.iterrows():
-            user_id, username, first_name = row['user_id'], row['username'], row['first_name']
-            table.add_row([user_id, username, first_name])
+        # Create pretty ouputs of the table in telegram
+        table = self._pretty_table(result, columns=['user_id', 'username', 'first_name'])
 
         await message.answer(f"<b>Registered users:</b> \n<pre>\n{table}\n</pre>", reply_markup=no_markup)
 
@@ -132,13 +129,8 @@ class AdminService:
             await message.answer("No data found for <u>Allowed users</u>")
             return 
 
-        # Create PrettyTable class for pretty ouputs of the table in telegram
-        table = PrettyTable()
-        table.field_names = ['user_id', 'username', 'first_name']
-
-        for index, row in result.iterrows():
-            user_id, username, first_name = row['user_id'], row['username'], row['first_name']
-            table.add_row([user_id, username, first_name])
+        # Create pretty ouputs of the table in telegram
+        table = self._pretty_table(result, columns=['user_id', 'username', 'first_name'])
 
         await message.answer(f"<b>Allowed users:</b> \n<pre>\n{table}\n</pre>", reply_markup=no_markup)
 
@@ -155,12 +147,44 @@ class AdminService:
             await message.answer("No data found for <u>Admins</u>")
             return 
 
-        # Create PrettyTable class for pretty ouputs of the table in telegram
-        table = PrettyTable()
-        table.field_names = ['user_id', 'username', 'first_name']
-
-        for index, row in result.iterrows():
-            user_id, username, first_name = row['user_id'], row['username'], row['first_name']
-            table.add_row([user_id, username, first_name])
-
+        # Create pretty ouputs of the table in telegram
+        table = self._pretty_table(result, columns=['user_id', 'username', 'first_name'])
+        
         await message.answer(f"<b>Admins:</b> \n<pre>\n{table}\n</pre>", reply_markup=no_markup)
+
+    async def get_analytics(self, message: types.Message, ADMIN_IDS=ADMIN_IDS):
+        # Check if the message sender is an admin
+        if message.from_user.id not in ADMIN_IDS:
+            await message.answer("Access denied")
+            return
+        
+        data = db.import_messages_table()
+        data = pd.DataFrame(data, columns=['user_id', 'username', 'first_name', 'tokens', 'timestamp'])
+    
+        data['timestamp'] = pd.to_datetime(data.timestamp, dayfirst=True)
+        data['tokens'] = data['tokens'].astype('int')
+
+        tokens_spent_per_user = data.groupby('user_id', as_index=False).tokens.sum()
+        tokens_spent_per_user_for_week = data[data.timestamp >= (datetime.now() - timedelta(days=7))]\
+            .groupby('user_id', as_index=False).tokens.sum()
+        tokens_spent_per_user_for_month = data[data.timestamp >= (datetime.now() - timedelta(days=7))]\
+            .groupby('user_id', as_index=False).tokens.sum()
+
+        # Create pretty ouputs of the table in telegram
+        table_1 = self._pretty_table(tokens_spent_per_user, columns=['user_id', 'tokens'])
+        table_2 = self._pretty_table(tokens_spent_per_user_for_week, columns=['user_id', 'tokens'])
+        table_3 = self._pretty_table(tokens_spent_per_user_for_month, columns=['user_id', 'tokens'])
+
+        await message.answer(f"<b>Tokens spent per user</b> \n<pre>\n{table_1}\n</pre>\n"
+                             f"<b>Tokens spent per user for a <u>week</u></b> \n<pre>\n{table_2}\n</pre>\n"
+                             f"<b>Tokens spent per user for a <u>month</u></b> \n<pre>\n{table_3}\n</pre>\n", 
+                              reply_markup=no_markup)
+
+    def _pretty_table(self, data, columns):
+        table = PrettyTable()
+        table.field_names = columns
+
+        for index, row in data.iterrows():
+            table.add_row(row)
+
+        return table

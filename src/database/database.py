@@ -199,3 +199,28 @@ class DataBase:
 
         except Exception as exp:
             logger.info(f"Couldn't execute the function \"import_admins\" \n {exp}")
+    
+    def import_messages_table(self):
+        try:
+            connection = self.connect_to_db()
+
+            with connection.cursor() as cursor:
+                query = f"""SELECT 
+                                messages.user_id, 
+                                registered_users.username, 
+                                registered_users.first_name, 
+                                messages.tokens, 
+                                messages.timestamp
+                            FROM registered_users
+                            INNER JOIN messages 
+                                ON messages.user_id = registered_users.user_id"""
+                cursor.execute(query)
+                result = cursor.fetchall()
+
+                connection.close()
+                logger.info("Closed connection to Database")
+
+                return result
+
+        except Exception as exp:
+            logger.info(f"Couldn't execute the function \"import_admins\" \n {exp}")

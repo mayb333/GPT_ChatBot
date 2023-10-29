@@ -142,4 +142,74 @@ class DataBase:
                 logger.info("Closed connection to Database")
         except Exception as exp:
             logger.info(f"Couldn't execute the function \"remove_user_from_admins_table\" \n {exp}")
+
+    def import_registered_users(self):
+        try:
+            connection = self.connect_to_db()
+
+            with connection.cursor() as cursor:
+                query = f"""SELECT *
+                            FROM registered_users"""
+                cursor.execute(query)
+                result = cursor.fetchall()
+
+                connection.close()
+                logger.info("Closed connection to Database")
+
+                return result
+
+        except Exception as exp:
+            logger.info(f"Couldn't execute the function \"import_registered_users\" \n {exp}")
+
+    def import_allowed_users(self):
+        try:
+            connection = self.connect_to_db()
+
+            with connection.cursor() as cursor:
+                query = f"""SELECT registered_users.user_id, registered_users.username, registered_users.first_name
+                            FROM registered_users
+                            INNER JOIN allowed_users 
+                                ON allowed_users.user_id = registered_users.user_id"""
+                cursor.execute(query)
+                result = cursor.fetchall()
+
+                connection.close()
+                logger.info("Closed connection to Database")
+
+                return result
+
+        except Exception as exp:
+            logger.info(f"Couldn't execute the function \"import_allowed_users\" \n {exp}")
+
+    def import_admins(self):
+        try:
+            connection = self.connect_to_db()
+
+            with connection.cursor() as cursor:
+                query = f"""SELECT registered_users.user_id, registered_users.username, registered_users.first_name
+                            FROM registered_users
+                            INNER JOIN admins 
+                                ON admins.user_id = registered_users.user_id"""
+                cursor.execute(query)
+                result = cursor.fetchall()
+
+                connection.close()
+                logger.info("Closed connection to Database")
+
+                return result
+
+        except Exception as exp:
+            logger.info(f"Couldn't execute the function \"import_admins\" \n {exp}")
         
+
+if __name__ == '__main__':
+    import pandas as pd
+    from tabulate import tabulate
+    db = DataBase()
+    res = db.import_allowed_users()
+
+    print(res)
+
+    res_2 = db.import_admins()
+
+    print(res_2)

@@ -20,6 +20,7 @@ class GptBotLaunching:
 
         # Write to DB
         db.add_user_to_admins_table(user_id=OWNER_ID)
+        db.add_user_to_allowed_users_table(user_id=OWNER_ID)
 
         logger.info("Initialized Main Admin")
 

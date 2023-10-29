@@ -2,7 +2,7 @@ import pandas as pd
 from aiogram import types
 from loguru import logger
 from prettytable import PrettyTable
-from config import ADMIN_IDS, ALLOWED_USERS
+from config import ADMIN_IDS, ALLOWED_USERS, OWNER_ID
 from src.app.loader import db
 from src.utils.markups import no_markup
 
@@ -29,13 +29,17 @@ class AdminService:
         else:
             await message.answer("Invalid or duplicate ID", reply_markup=no_markup)
 
-    async def remove_admin(self, message: types.Message, ADMIN_IDS=ADMIN_IDS):
+    async def remove_admin(self, message: types.Message, ADMIN_IDS=ADMIN_IDS, OWNER_ID=OWNER_ID):
         # Check if the message sender is an admin
         if message.from_user.id not in ADMIN_IDS:
             await message.answer("Access denied", reply_markup=no_markup)
             return
 
         del_id = message.get_args()
+
+        if int(del_id) == OWNER_ID:
+            await message.answer("Access denied. \nYou're trying to remove the Owner")
+            return
 
         if del_id and del_id.isdigit() and int(del_id) in ADMIN_IDS:
             ADMIN_IDS.remove(int(del_id))

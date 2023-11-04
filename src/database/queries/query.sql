@@ -3,7 +3,7 @@ CREATE TABLE registered_users
 	user_id varchar(50),
 	username varchar(50),
 	first_name varchar(100),
-	first_message varchar(50)
+	timestamp varchar(50)
 );
 
 CREATE TABLE messages
